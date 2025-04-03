@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 interface Plato {
   id: number
@@ -70,7 +70,7 @@ export default function AdminPage() {
   const handleDelete = async (id: number) => {
     if (confirm('¿Estás seguro de que quieres eliminar este plato?')) {
       const response = await fetch(`/api/platos/${id}`, {
-        method: 'DELETE', 
+        method: 'DELETE',
       })
 
       if (response.ok) {
@@ -166,10 +166,14 @@ export default function AdminPage() {
         {platos.map((plato) => (
           <div key={plato.id} className="bg-white rounded-lg shadow-md p-6">
             <div className="relative h-48 w-full mb-4">
-              <img
+              <Image
                 src={plato.imagen}
                 alt={plato.nombre}
+                fill
                 className="object-cover rounded-lg"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority={false}
+                unoptimized={true}
               />
             </div>
             <h3 className="text-xl font-semibold mb-2">{plato.nombre}</h3>

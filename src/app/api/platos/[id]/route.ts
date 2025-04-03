@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+type Props = {
+  params: {
+    id: string
+  }
+}
+
+export async function DELETE(request: Request, { params }: Props) {
   try {
     const id = parseInt(params.id)
     await prisma.plato.delete({
