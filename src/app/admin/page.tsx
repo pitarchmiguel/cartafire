@@ -44,6 +44,15 @@ export default function AdminPage() {
     setCategorias(data)
   }
 
+  // Agrupar platos por categoría
+  const platosPorCategoria = platos.reduce((acc, plato) => {
+    if (!acc[plato.categoria.nombre]) {
+      acc[plato.categoria.nombre] = []
+    }
+    acc[plato.categoria.nombre].push(plato)
+    return acc
+  }, {} as Record<string, Plato[]>)
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const response = await fetch('/api/platos', {
@@ -162,30 +171,36 @@ export default function AdminPage() {
         </form>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {platos.map((plato) => (
-          <div key={plato.id} className="bg-white rounded-lg shadow-md p-6">
-            <div className="relative h-48 w-full mb-4">
-              <Image
-                src={plato.imagen}
-                alt={plato.nombre}
-                fill
-                className="object-cover rounded-lg"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                priority={false}
-                unoptimized={true}
-              />
+      <div className="space-y-12">
+        {Object.entries(platosPorCategoria).map(([categoria, platos]) => (
+          <div key={categoria}>
+            <h2 className="text-2xl font-semibold mb-6">{categoria}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {platos.map((plato) => (
+                <div key={plato.id} className="bg-white rounded-lg shadow-md p-6">
+                  <div className="relative h-48 w-full mb-4">
+                    <Image
+                      src={plato.imagen}
+                      alt={plato.nombre}
+                      fill
+                      className="object-cover rounded-lg"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      priority={false}
+                      unoptimized={true}
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{plato.nombre}</h3>
+                  <p className="text-gray-600 mb-2">{plato.descripcion}</p>
+                  <p className="text-lg font-bold mb-2">{plato.precio}€</p>
+                  <button
+                    onClick={() => handleDelete(plato.id)}
+                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              ))}
             </div>
-            <h3 className="text-xl font-semibold mb-2">{plato.nombre}</h3>
-            <p className="text-gray-600 mb-2">{plato.descripcion}</p>
-            <p className="text-lg font-bold mb-2">{plato.precio}€</p>
-            <p className="text-sm text-gray-500 mb-4">Categoría: {plato.categoria.nombre}</p>
-            <button
-              onClick={() => handleDelete(plato.id)}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
-            >
-              Eliminar
-            </button>
           </div>
         ))}
       </div>
